@@ -26,6 +26,13 @@ if __name__ == '__main__':
 	f.write(' ')
 	f.write('ansible_sudo_pass=' + config_pass)
 	f.close()
+        f = open('config_vars.yml', 'w')
+        f.write('setup_cmd: /opt/contrail/contrail_packages/')
+        f.write('\n')
+        f.write('fab_cmd: /opt/contrail/utils/')
+        f.write('\n')
+        f.write('host_ip: ' + config_IP)
+        f.close()
 	print '<<<<<<<<<< configuration is done >>>>>>>>>>'
 	print '<<<<<<<<<< Now you can run this command: >>>>>>>>>> '
 	print 'Please copy your desired contrail and openstack image in playbook/files/ directory with contrail.deb name'

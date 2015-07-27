@@ -38,7 +38,7 @@
       poll: 0
     - pause: seconds=400
     - name: wait for server
-      wait_for: host=10.10.11.115 port=22
+      wait_for: host={{ host_ip }} port=22
     - name: run command fab install_contrail
       command: chdir={{ fab_cmd }} fab install_contrail
     - name: run command fab setup_interface
@@ -47,7 +47,9 @@
       command: chdir={{ fab_cmd }} fab setup_all
       async: 800
       poll: 0
-    - pause: seconds=800
+    - pause: seconds=900
+    - name: wait for server
+      wait_for: host={{ host_ip }} port=22
     - name: run command to start nova scheduler
       command: service nova-scheduler restart
   handlers:
