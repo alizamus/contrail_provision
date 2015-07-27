@@ -4,6 +4,8 @@
   vars_files:
     - config_vars.yml
   tasks:
+    - name: Change the source list for apt-get
+      command: cp /etc/apt/sources.list.save /etc/apt/sources.list
     - name: set the time zone variables
       copy: >
         content='America/New_York'
