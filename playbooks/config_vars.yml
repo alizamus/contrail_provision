@@ -1,0 +1,2 @@
+setup_cmd: /opt/contrail/contrail_packages/
+fab_cmd: /opt/contrail/utils/

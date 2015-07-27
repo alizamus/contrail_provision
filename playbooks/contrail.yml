@@ -1,0 +1,55 @@
+---
+- name: test the cloud
+  hosts: cloud
+  vars_files:
+    - config_vars.yml
+  tasks:
+    - name: set the time zone variables
+      copy: >
+        content='America/New_York'
+        dest=/etc/timezone
+        owner=root
+        group=root
+        mode=0644
+        backup=yes
+      notify:
+        - update time zone
+    - name: copy contrail file
+      copy: > 
+        src=files/contrail.deb
+        dest=/tmp
+        owner=root 
+        group=root
+    - name: run dpkg command
+      command: dpkg -i /tmp/contrail.deb
+    - name: run setup file
+      command: chdir={{setup_cmd}} bash setup.sh
+    - name: copy the testbed file
+      copy: > 
+        src=files/testbed.py
+        dest=/opt/contrail/utils/fabfile/testbeds
+        owner=root 
+        group=root
+    - name: run command fab install_pkg_all
+      command: chdir={{ fab_cmd }} fab install_pkg_all:/tmp/contrail.deb
+    - name: run command fab upgrade kernel all
+      command: chdir={{ fab_cmd }} fab upgrade_kernel_all
+      async: 400
+      poll: 0
+    - pause: seconds=400
+    - name: wait for server
+      wait_for: host=10.10.11.115 port=22
+    - name: run command fab install_contrail
+      command: chdir={{ fab_cmd }} fab install_contrail
+    - name: run command fab setup_interface
+      command: chdir={{ fab_cmd }} fab setup_interface
+    - name: run command fab setup_all
+      command: chdir={{ fab_cmd }} fab setup_all
+      async: 800
+      poll: 0
+    - pause: seconds=800
+    - name: run command to start nova scheduler
+      command: service nova-scheduler restart
+  handlers:
+    - name: update time zone
+      command: dpkg-reconfigure --frontend noninteractive tzdata
