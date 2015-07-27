@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-
+import os
 
 
 if __name__ == '__main__':
@@ -33,6 +33,8 @@ if __name__ == '__main__':
         f.write('\n')
         f.write('host_ip: ' + config_IP)
         f.close()
+	command = 'ssh-keygen -R ' + str(config_IP)
+	os.system(command)
 	print '<<<<<<<<<< configuration is done >>>>>>>>>>'
 	print '<<<<<<<<<< Now you can run this command: >>>>>>>>>> '
 	print 'Please copy your desired contrail and openstack image in playbook/files/ directory with contrail.deb name'
