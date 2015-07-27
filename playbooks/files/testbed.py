@@ -1,19 +1,19 @@
 from fabric.api import env
 
 #Management ip addresses of hosts in the cluster
-host1 = 'root@172.16.11.50'
+host1 = 'root@10.10.11.115'
 
 
 #External routers if any
 #for eg. 
 #ext_routers = [('mx1', '10.204.216.253')]
-ext_routers = []
+ext_routers = [('mx1', '172.16.11.13')]
 
 #Autonomous system number
-router_asn = 64512
+router_asn = 65011
 
 #Host from which the fab commands are triggered to install and provision
-host_build = 'root@172.16.11.50'
+host_build = 'root@10.10.11.115'
 
 
 #Role definition of the hosts.
@@ -41,7 +41,7 @@ env.openstack_admin_password = 'contrail123'
 
 #Hostnames
 env.hostnames = {
-    'all': ['a0s1']
+    'all': ['dc11-cfg-1']
 }
 
 # Passwords of each host
@@ -143,9 +143,9 @@ env.ostypes = {
 
 #OPTIONAL SEPARATION OF MANAGEMENT AND CONTROL + DATA and OPTIONAL VLAN INFORMATION
 #==================================================================================
-#control_data = {
-#    host1 : { 'ip': '192.168.10.1/24', 'gw' : '192.168.10.254', 'device': 'bond0', 'vlan': '224' },
-#}
+control_data = {
+    host1 : { 'ip': '172.16.11.50/24', 'gw' : '172.16.11.254', 'device': 'p1p2', '': '' },
+}
 
 #OPTIONAL STATIC ROUTE CONFIGURATION
 #===================================
