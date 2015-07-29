@@ -49,6 +49,7 @@ if __name__ == '__main__':
 				f.write('ansible_ssh_pass=' + config_pass)
 				f.write(' ')
 				f.write('ansible_sudo_pass=' + config_pass)
+				a = a + 1
 	f.close()
         f = open('config_vars.yml', 'w')
         f.write('setup_cmd: /opt/contrail/contrail_packages/')
