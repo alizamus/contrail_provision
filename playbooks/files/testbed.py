@@ -1,94 +1,97 @@
 from fabric.api import env
 
 #Management ip addresses of hosts in the cluster
-host1 = 'root@10.10.11.115'
+host1 = 'root@10.10.11.16'
+host2 = 'root@10.10.11.17'
+host3 = 'root@10.10.11.18'
+host4 = 'root@10.10.11.19'
+host5 = 'root@10.10.11.20'
+host6 = 'root@10.10.11.48'
+host7 = 'root@10.10.11.49'
 
 
 #External routers if any
 #for eg. 
 #ext_routers = [('mx1', '10.204.216.253')]
-ext_routers = [('mx1', '172.16.11.13')]
+ext_routers = [('DC3-CE-MX80', '172.16.4.13')]
 
 #Autonomous system number
-router_asn = 65011
+router_asn = 65004
 
 #Host from which the fab commands are triggered to install and provision
-host_build = 'root@10.10.11.115'
+host_build = 'root@10.10.11.16'
 
 
 #Role definition of the hosts.
 env.roledefs = {
-    'all': [host1],
-    'cfgm': [host1],
-    'openstack': [host1],
-    'control': [host1],
-    'compute': [host1],
-    'collector': [host1],
-    'webui': [host1],
-    'database': [host1],
+    'all': [host1, host2, host3, host4, host5, host6, host7],
+    'cfgm': [host1, host2, host3],
+    'openstack': [host1, host2, host3],
+    'control': [host1, host2, host3],
+    'compute': [host4, host5, host6, host7],
+    'collector': [host1, host2, host3],
+    'webui': [host1, host2, host3],
+    'database': [host1, host2, host3],
     'build': [host_build],
-    'storage-master': [host1],
-    'storage-compute': [host1],
-    # 'vgw': [host1], # Optional, Only to enable VGW. Only compute can support vgw
-    # 'tsn': [host1], # Optional, Only to enable TSN. Only compute can support TSN
-    # 'toragent': [host1], Optional, Only to enable Tor Agent. Only compute can
+    'storage-master': [host1, host2, host3],
+    'storage-compute': [host4, host5, host6, host7],
+    # 'vgw': [host4, host5], # Optional, Only to enable VGW. Only compute can support vgw
+    # 'tsn': [host10], # Optional, Only to enable TSN. Only compute can support TSN
+    # 'toragent': [host10], Optional, Only to enable Tor Agent. Only compute can
     # support Tor Agent
- #   'backup':[backup_node],  # only if the backup_node is defined
+    #   'backup':[backup_node],  # only if the backup_node is defined
+}
+
+env.hostnames = {
+    'all': ['dc4-cfg-1', 'dc4-ctrl-1', 'dc4-ctrl-2', 'dc4-compute-1', 'dc4-compute-2', 'dc4-compute-3', 'dc4-compute-4']
 }
 
 #Openstack admin password
 env.openstack_admin_password = 'contrail123'
 
-#Hostnames
-env.hostnames = {
-    'all': ['dc11-cfg-1']
-}
-
-# Passwords of each host
-# for passwordless login's no need to set env.passwords,
-# instead populate env.key_filename in testbed.py with public key.
+env.password = 'c0ntrail123'
+#Passwords of each host
 env.passwords = {
     host1: 'c0ntrail123',
-  #  backup_node: 'secret',
+    host2: 'c0ntrail123',
+    host3: 'c0ntrail123',
+    host4: 'c0ntrail123',
+    host5: 'c0ntrail123',
+    host6: 'c0ntrail123',
+    host7: 'c0ntrail123',
+    #  backup_node: 'c0ntrail123',
     host_build: 'c0ntrail123',
 }
 
-# SSH Public key file path for passwordless logins
-# if env.passwords is not specified.
-#env.key_filename = '/root/.ssh/id_rsa.pub'
-
 #For reimage purpose
 env.ostypes = {
-    host1:'ubuntu',
+    host1: 'ubuntu',
+    host2: 'ubuntu',
+    host3: 'ubuntu',
+    host4: 'ubuntu',
+    host5: 'ubuntu',
+    host6: 'ubuntu',
+    host7: 'ubuntu',
 }
-#env.orchestrator = 'openstack' #other values are 'vcenter', 'none' default:openstack
-
-#ntp server the servers should point to
-#env.ntp_server = 'ntp.juniper.net'
-
-# OPTIONAL COMPUTE HYPERVISOR CHOICE:
-#======================================
-# Compute Hypervisor
-#env.hypervisor = {
-#    host1: 'docker',
-#}
-#  Specify the hypervisor to be provisioned in the compute node.(Default=libvirt)
+env.orchestrator = 'openstack' #other values are 'vcenter' default:openstack
 
 # INFORMATION FOR DB BACKUP/RESTORE ..
 #=======================================================
 #Optional,Backup Host configuration if it is not available then it will put in localhost
 #backup_node = 'root@2.2.2.2'
 
-# Optional, Local/Remote location of backup_data path 
-# if it is not passed it will use default path 
+# Optional, Local/Remote location of backup_data path
+# if it is not passed then it will use default path
 #backup_db_path= ['/home/','/root/']
-#cassandra backup can be defined either "full" or "custom"  
-#full -> take complete snapshot of cassandra DB 
-#custom -> take snapshot except defined in skip_keyspace 
-#cassandra_backup='custom'  [ MUST OPTION] 
+#cassandra backup can be defined either "full" or "custom"
+#full -> take complete snapshot of cassandra DB
+#custom -> take snapshot except defined in skip_keyspace
+#cassandra_backup='custom'  [ MUST OPTION]
 #skip_keyspace=["ContrailAnalytics"]  IF cassandra_backup is selected as custom
-#service token need to define to do  restore of  backup data
+#service token need to define to do  restore of backup data
 #service_token = '53468cf7552bbdc3b94f'
+
+
 
 
 #OPTIONAL ANALYTICS CONFIGURATION
@@ -130,48 +133,63 @@ env.ostypes = {
 #analytics_statistics_ttl = 48
 #analytics_flow_ttl = 48
 
-#following parameter allows to specify minimum amount of disk space in the analytics
-#database partition, if configured amount of space is not present, it will fail provisioning
-#minimum_diskGB = 256
-
 #OPTIONAL BONDING CONFIGURATION
 #==============================
 #Inferface Bonding
 #bond= {
-#    host1 : { 'name': 'bond0', 'member': ['p2p0p0','p2p0p1','p2p0p2','p2p0p3'], 'mode': '802.3ad', 'xmit_hash_policy': 'layer3+4' },
+#    host2 : { 'name': 'bond0', 'member': ['p2p0p0','p2p0p1','p2p0p2','p2p0p3'], 'mode': '802.3ad', 'xmit_hash_policy': 'layer3+4' },
+#    host5 : { 'name': 'bond0', 'member': ['p4p0p0','p4p0p1','p4p0p2','p4p0p3'], 'mode': '802.3ad', 'xmit_hash_policy': 'layer3+4' },
 #}
 
 #OPTIONAL SEPARATION OF MANAGEMENT AND CONTROL + DATA and OPTIONAL VLAN INFORMATION
 #==================================================================================
 control_data = {
-    host1 : { 'ip': '172.16.11.50/24', 'gw' : '172.16.11.254', 'device': 'p1p2', '': '' },
+    host1 : { 'ip': '172.16.4.50/24', 'gw' : '172.16.4.254', 'device':'eth0', '': '' },
+    host2 : { 'ip': '172.16.4.71/24', 'gw' : '172.16.4.254', 'device':'eth0', '': '' },
+    host3 : { 'ip': '172.16.4.72/24', 'gw' : '172.16.4.254', 'device':'eth0', '': '' },
+    host4 : { 'ip': '172.16.4.101/24', 'gw' : '172.16.4.254', 'device':'eth1', '': '' },
+    host5 : { 'ip': '172.16.4.102/24', 'gw' : '172.16.4.254', 'device':'eth1', '': '' },
+    host6 : { 'ip': '172.16.4.103/24', 'gw' : '172.16.4.254', 'device':'eth1', '': '' },
+    host7 : { 'ip': '172.16.4.104/24', 'gw' : '172.16.4.254', 'device':'eth1', '': '' },
 }
 
 #OPTIONAL STATIC ROUTE CONFIGURATION
 #===================================
 #static_route  = {
-#    host1 : [{ 'ip': '10.1.1.0', 'netmask' : '255.255.255.0', 'gw':'192.168.10.254', 'intf': 'bond0' },
-#             { 'ip': '10.1.2.0', 'netmask' : '255.255.255.0', 'gw':'192.168.10.254', 'intf': 'bond0' }],
+#    host2 : [{ 'ip': '10.1.1.0', 'netmask' : '255.255.255.0', 'gw':'172.16.4.254', 'intf': 'bond0' },
+#             { 'ip': '10.1.2.0', 'netmask' : '255.255.255.0', 'gw':'172.16.4.254', 'intf': 'bond0' }],
+#    host5 : [{ 'ip': '10.1.1.0', 'netmask' : '255.255.255.0', 'gw':'172.16.4.254', 'intf': 'bond0' }],
 #}
 
 #storage compute disk config
 #storage_node_config = {
-#    host1 : { 'disks' : ['sdc', 'sdd'] },
+#    host4 : { 'disks' : ['/dev/sdc', '/dev/sdd'], 'journal' : ['/dev/sde', '/dev/sdf'] },
+#    host5 : { 'disks' : ['/dev/sdc:/dev/sde', '/dev/sdd:/dev/sde'], 'ssd-disks' : ['/dev/sdf', '/dev/sdg'] },
+#    host6 : { 'disks' : ['/dev/sdc', '/dev/sdd'], 'local-disks' : ['/dev/sde'], 'local-ssd-disks' : ['/dev/sdf'] },
 #}
 
 #live migration config
 #live_migration = True
 
+#Enable this for External NFS server
+#ext_nfs_livem = True
+#ext_nfs_livem_mount = '11.1.0.1:/nfsvol'
+
+#Enable this for Ceph based NFS VM server
+#ceph_nfs_livem = True
+#ceph_nfs_livem_subnet = '172.16.4.253/24'
+#ceph_nfs_livem_image = '/ubuntu/livemnfs.qcow2'
+#ceph_nfs_livem_host = host4
 
 #To disable installing contrail interface rename package
-#env.interface_rename = False
+env.interface_rename = False
 
 #In environments where keystone is deployed outside of Contrail provisioning
 #scripts , you can use the below options 
 #
 # Note : 
 # "insecure" is applicable only when protocol is https
-# The entries in env.keystone overrides the below options which used 
+# The entries in env.keystone overrides the below options which used
 # to be supported earlier :
 #  service_token
 #  keystone_ip
@@ -180,35 +198,36 @@ control_data = {
 #  region_name
 #
 #env.keystone = {
-#    'keystone_ip'     : 'x.y.z.a',
-#    'auth_protocol'   : 'http',                  #Default is http
-#    'auth_port'       : '35357',                 #Default is 35357
-#    'admin_token'     : '33c57636fbc2c5552fd2',  #admin_token in keystone.conf
-#    'admin_user'      : 'admin',                 #Default is admin
-#    'admin_password'  : 'contrail123',           #Default is contrail123
-#    'nova_password'   : 'contrail123',           #Default is the password set in admin_password
-#    'neutron_password': 'contrail123',           #Default is the password set in admin_password
-#    'service_tenant'  : 'service',               #Default is service
-#    'admin_tenant'    : 'admin',                 #Default is admin
-#    'region_name'     : 'RegionOne',             #Default is RegionOne
-#    'insecure'        : 'True',                  #Default = False
-#    'manage_neutron'  : 'no',                    #Default = 'yes' , Does configure neutron user/role in keystone required.
+#    'keystone_ip'   : 'x.y.z.a',
+#    'auth_protocol' : 'http',                  #Default is http
+#    'auth_port'     : '35357',                 #Default is 35357
+#    'admin_token'   : '33c57636fbc2c5552fd2',  #admin_token in keystone.conf
+#    'admin_user'    : 'admin',                 #Default is admin
+#    'admin_password': 'contrail123',           #Default is contrail123
+#    'service_tenant': 'service',               #Default is service
+#    'admin_tenant'  : 'admin',                 #Default is admin
+#    'region_name'   : 'RegionOne',             #Default is RegionOne
+#    'insecure'      : 'True',                  #Default = False
+#    'manage_neutron': 'no',                    #Default = 'yes' , Does configure neutron user/role in keystone required.
 #}
 #
 
-#env.nova = {
-#    'cpu_mode': 'host-passthrough', # Possible options: none, host-passthrough, host-model, and custom
-#                                    # if cpu_mode is 'custom' specify cpu_model option too
-#    'cpu_model': 'Nehalem',         # relevant only if cpu_mode is 'custom'
-#}
-
-# In High Availability setups.
-#env.ha = {
-#    'internal_vip'   : '1.1.1.1',               #Internal Virtual IP of the HA setup.
-#    'external_vip'   : '2.2.2.2',               #External Virtual IP of the HA setup.
-#    'nfs_server'      : '3.3.3.3',               #IP address of the NFS Server which will be mounted to /var/lib/glance/images of openstack Node, Defaults to env.roledefs['compute'][0]
-#    'nfs_glance_path' : '/var/tmp/images/',      #NFS Server path to save images, Defaults to /var/tmp/glance-images/
-#}
+# In Openstack or Contrail High Availability setups.
+# internal_vip          : Virtual IP of the openstack HA Nodes in the data/control(internal) nerwork,
+#                         all the Openstack services behind this VIP are accessed using this VIP.
+# external_vip          : Virtual IP of the Openstack HA Nodes in the management(external) nerwork,
+#                         Openstack dashboard and novncproxy  services behind this VIP are accessed using this VIP.
+# contrail_internal_vip : Virtual IP of the Contrail HA Nodes in the data/control(internal) nerwork,
+#                         all the Contrail services behind this VIP is accessed using this VIP.
+# contrail_external_vip : Virtual IP of the Contrail HA Nodes in the management(external) nerwork,
+#                         Contrail introspects are are accessed using this VIP.
+# nfs_server            : NFS server to be used to store the glance images.
+# nfs_glance_path       : NFS server image path, which will be mounted on the Openstack Nodes and
+#                         the glance images will be placed/accesed in/from this location.
+env.ha = {
+    'internal_vip'   : '172.16.4.10',               #Internal Virtual IP of the openstack HA Nodes.
+    'external_vip'   : '10.10.7.63',               #External Virtual IP of the openstack HA Nodes.
+}
 
 # In environments where openstack services are deployed independently 
 # from contrail, you can use the below options 
@@ -223,14 +242,12 @@ control_data = {
 #    'service_token' : '33c57636fbc2c5552fd2', #Common service token for for all openstack services
 #    'amqp_host' : '10.204.217.19',            #IP of AMQP Server to be used in openstack
 #    'manage_amqp' : 'yes',                    #Default no, Manage seperate AMQP for openstack services in openstack nodes.
-#    'osapi_compute_workers' : 40,             #Default 40, For low memory system reduce the osapi compute workers thread.
-#    'conductor_workers' : 40,                 #Default 40, For low memory system reduce the conductor workers thread.
 #}
 
-# Neutron specific configuration 
-#env.neutron = {
-#   'protocol': 'http', # Default is http
-#}
+# Link-Local Metadata Service
+# By default fab scripts will retrieve metadata secret from openstack node.
+# To override, Specify Metadata proxy secret from Openstack node
+#neutron_metadata_proxy_shared_secret = <secret>
 
 #To enable multi-tenancy feature
 #multi_tenancy = True
@@ -239,7 +256,7 @@ control_data = {
 #haproxy = True
 
 #To Enable prallel execution of task in multiple nodes
-#do_parallel = True
+do_parallel = True
 
 # To configure the encapsulation priority. Default: MPLSoGRE 
 #env.encap_priority =  "'MPLSoUDP','MPLSoGRE','VXLAN'"
@@ -249,11 +266,7 @@ control_data = {
 
 #To enable LBaaS feature
 # Default Value: False
-#env.enable_lbaas = True
-
-# Ceilometer enable/disable installation and provisioning
-# Default Value: False
-#enable_ceilometer = True
+env.enable_lbaas = True
 
 #OPTIONAL REMOTE SYSLOG CONFIGURATION
 #===================================
@@ -284,54 +297,113 @@ control_data = {
 #gateway-routes: If any route is present then only those routes will be published
 #by VGW or Default route (0.0.0.0) will be published
 
-#env.vgw = {host1: {'vgw1':{'vn':'default-domain:admin:public:public', 'ipam-subnets': ['10.204.220.128/29', '10.204.220.136/29', 'gateway-routes': ['8.8.8.0/24', '1.1.1.0/24']}]},
-#                   'vgw2':{'vn':'default-domain:admin:public1:public1', 'ipam-subnets': ['10.204.220.144/29']}
+
+#env.vgw = {host4: {'vgw1':{'vn':'default-domain:admin:public:public', 'ipam-subnets': ['10.204.220.128/29', '10.204.220.136/29', 'gateway-routes': ['8.8.8.0/24', '1.1.1.0/24']}]},
+#                   'vgw2':{'vn':'default-domain:admin:public1:public1', 'ipam-subnets': ['10.204.220.144/29']}},
+#           host5: {'vgw2':{'vn':'default-domain:admin:public1:public1', 'ipam-subnets': ['10.204.220.144/29']}}
 #          }
 
 #OPTIONAL optional tor agent and tsn CONFIGURATION
 #==================================================
-#Section tor agent is only relevant when you want to use Tor Agent feature.
+#Section tor agent is only relevant when you want to use Tor Agent feature. 
 #You can use one of your compute node as  Tor Agent . Same or diffrent compute
 #node should be enable as tsn
 
 #Definition for the Key used
 #-------------------------------------
 # tor_ip: IP of the tor switch
-# tor_agent_id: Unique Id of the tor switch to identify. Typicaly a numeric value.
-# tor_agent_name: Unique name for TOR Agent. This is optional field. If this is
-#                 not specified name used will be <hostname>-<tor_agent_id>
+# tor_id: Unique Id of the tor switch to identify. Typicaly a numeric value.
 # tor_ovs_port: Port number to be used by ovs
 # tor_ovs_protocol: Connection protocol to be used by ovs. Currently only TCP
 # tor_tsn_ip: TSN node ip
-#env.tor_agent =
-#{host3:[{'tor_ip':'10.204.217.39','tor_agent_id':'1','tor_agent_name':'nodexx-1', 'tor_ovs_port':'9999','tor_ovs_protocol':'tcp','tor_tsn_ip':'10.204.221.35'}]}
-
-# OPTIONAL DPDK CONFIGURATION
-# ===========================
-# If some compute nodes should use DPDK vRouter version it has to be put in
-# env.dpdk dictionary. The format is:
-# env.dpdk = {
-#     host1: { 'huge_pages' : '50', 'coremask' : '0xf' },
-#     host2: { 'huge_pages' : '50', 'coremask' : '0,3-7' },
-# }
-# huge_pages - Specify what percentage of host memory should be reserved
-#              for access with huge pages
-# coremask   - Specify CPU affinity mask to run vRouter with. Supported formats:
-#              hexadecimal, comma-sepparated list of CPUs, dash-separated range
-#              of CPUs.
-# OPTIONAL vrouter limit parameter
-# ==================================
-#env.vrouter_module_params = {
-#     host2:{'mpls_labels':'131072', 'nexthops':'131072', 'vrfs':'65536', 'macs':'262144'},
+# tor_tsn_name: Name of the TSN node
+# tor_name: Name of the tor switch 
+# tor_tunnel_ip: Data plane IP for the tor switch
+# tor_vendor_name: Vendor type for TOR switch
+# tor_http_server_port: HTTP server port. Same will be used by tor agent
+# introspect
+#env.tor_agent = {host10:[{
+#                    'tor_ip':'10.204.217.39', IP of the tor switch
+#                    'tor_id':'1',
+#                    'tor_type':'ovs',
+#                    'tor_ovs_port':'9999',
+#                    'tor_ovs_protocol':'tcp',
+#                    'tor_tsn_ip':'10.204.221.35',
+#                    'tor_tsn_name':'nodec45',
+#                    'tor_name':'bng-contrail-qfx51-2',
+#                    'tor_tunnel_ip':'34.34.34.34',
+#                    'tor_vendor_name':'Juniper'
+#                    'tor_http_server_port': '9010',
+#                       }]
+#                }
+#######################################
+#vcenter provisioning
+#server is the vcenter server ip
+#port is the port on which vcenter is listening for connection
+#username is the vcenter username credentials
+#password is the vcenter password credentials
+#auth is the autentication type used to talk to vcenter, http or https
+#datacenter is the datacenter name we are operating on
+#cluster is the clustername we are operating on
+#dvswitch section contains distributed switch related para,s
+#       dv_switch_name 
+#dvportgroup section contains the distributed port group info
+#       dv_portgroupname and the number of ports the group has
+######################################
+#env.vcenter = {
+#        'server':'127.0.0.1',
+#        'port': '443',
+#        'username': 'administrator@vsphere.local',
+#        'password': 'Contrail123!',
+#        'auth': 'https',
+#        'datacenter': 'kd_dc',
+#        'cluster': 'kd_cluster',
+#        'dv_switch': { 'dv_switch_name': 'kd_dvswitch',
+#                     },
+#        'dv_port_group': { 'dv_portgroup_name': 'kd_dvportgroup',
+#                           'number_of_ports': '3',
+#                     },
 #}
+
+####################################################################################
+# The compute vm provisioning on ESXI host
+# This section is used to copy a vmdk on to the ESXI box and bring it up 
+# the contrailVM which comes up will be setup as a compute node with only
+# vrouter running on it. Each host has an associated esxi to it. 
 #
-# OPTIONAL md5 key enabling
-# There are 2 ways of enabling BGP md5 key on node apart from the webui.
-# 1. Before provisioning the node, include an env dict in testbed.py as shown below specifying the desired key value #    on the node. The key should be of type "string" only.
-# 2. If md5 is not included in testbed.py and the node is already provisioned, you can run the
-#    contrail-controller/src/config/utils/provision_control.py script with a newly added argument for md5.
-# The below env dict is for first method specified, where you include a dict in testbed.py as shown below:
-#  env.md5 = {
-#     host1: 'juniper',
-#  }
-# 'juniper' is the md5 key that will be configured on the node.
+# esxi_host information:
+#    ip: the esxi ip on which the contrailvm(host/compute) runs
+#    username: username used to login to esxi
+#    password: password for esxi
+#    fabric_vswitch: the name of the underlay vswitch that runs on esxi 
+#                    optional, defaults to 'vswitch0'
+#    fabric_port_group: the name of the underlay port group for esxi
+#                       optional, defaults to contrail-fab-pg'
+#    uplinck_nic: the nic used for underlay
+#                 optional, defaults to None
+#    data_store: the datastore on esxi where the vmdk is copied to
+#    contrail_vm information:
+#        mac: the virtual mac address for the contrail vm
+#        host: the contrail_vm ip in the form of 'user@contrailvm_ip'
+#        vmdk: the absolute path of the contrail-vmdk used to spawn vm
+#              optional, if vmdk_download_path is specified
+#        vmdk_download_path: download path of the contrail-vmdk.vmdk used to spawn vm  
+#                            optional, if vmdk is specified
+#        deb: absolute path of the contrail package to be installed on contrailvm
+#             optional, if contrail package is specified in command line
+#        ntp_server: ntp server ip for the contrail vm 
+######################################################################################
+#esxi_hosts = {
+#       'esxi': {
+#             'ip': '1.1.1.1',
+#             'username': 'root',
+#             'password': 'c0ntrail123',
+#             'datastore': "/vmfs/volumes/ds1",
+#             'contrail_vm': {
+#                   'mac': "00:50:56:05:ba:ba",
+#                   'host': "root@2.2.2.2",
+#                   'vmdk_download_path': "http://10.84.5.100/vmware/vmdk/ContrailVM-disk1.vmdk",
+#                   'ntp_server': "10.84.9.17",
+#             }
+#       }
+#}

@@ -1,6 +1,6 @@
 ---
-- name: test the cloud
-  hosts: cloud
+- name: set time zone
+  hosts: time
   vars_files:
     - config_vars.yml
   tasks:
@@ -15,8 +15,17 @@
         group=root
         mode=0644
         backup=yes
-      notify:
-        - update time zone
+    - name: update time zone
+      command: dpkg-reconfigure --frontend noninteractive tzdata
+
+- name: installing contrail
+  hosts: cloud
+  vars_files:
+    - config_vars.yml
+  tasks:
+    - name: Change the source list for apt-get
+      command: cp /etc/apt/sources.list.save /etc/apt/sources.list
+      ignore_errors: yes
     - name: copy contrail file
       copy: > 
         src=files/contrail.deb
@@ -37,24 +46,27 @@
       command: chdir={{ fab_cmd }} fab install_pkg_all:/tmp/contrail.deb
     - name: run command fab upgrade kernel all
       command: chdir={{ fab_cmd }} fab upgrade_kernel_all
-      async: 400
+      async: 1200
       poll: 0
-    - pause: seconds=400
+    - pause: seconds=1300
     - name: wait for server
       wait_for: host={{ host_ip }} port=22
     - name: run command fab install_contrail
       command: chdir={{ fab_cmd }} fab install_contrail
+      async: 2100
+      poll: 0
+    - pause: seconds=2200
     - name: run command fab setup_interface
       command: chdir={{ fab_cmd }} fab setup_interface
+      async: 180
+      poll: 0
+    - pause: seconds=280
     - name: run command fab setup_all
       command: chdir={{ fab_cmd }} fab setup_all
-      async: 800
+      async: 2100
       poll: 0
-    - pause: seconds=900
+    - pause: seconds=2200
     - name: wait for server
       wait_for: host={{ host_ip }} port=22
     - name: run command to start nova scheduler
       command: service nova-scheduler restart
-  handlers:
-    - name: update time zone
-      command: dpkg-reconfigure --frontend noninteractive tzdata

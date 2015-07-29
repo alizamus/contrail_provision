@@ -25,6 +25,30 @@ if __name__ == '__main__':
 	f.write('ansible_ssh_pass=' + config_pass)
 	f.write(' ')
 	f.write('ansible_sudo_pass=' + config_pass)
+        print 'Do you need to set time zone? (y or n)'
+        timez = raw_input()
+	a = 1
+	if timez == 'y':
+		f.write('\n')
+		f.write('[time]')
+		while True:
+        		print 'Please enter the ip address that you want to set its time zone. If there is no more please enter n.(ip or n)'
+			time_ip = raw_input()
+			if time_ip == 'n':
+				break
+			else:
+				f.write('\n')
+				f.write('time' + str(a))
+				f.write(' ')
+				f.write('ansible_ssh_host=' + time_ip)
+				f.write(' ')
+				f.write('ansible_ssh_port=22')
+				f.write(' ')
+				f.write('ansible_ssh_user=' + config_user)
+				f.write(' ')
+				f.write('ansible_ssh_pass=' + config_pass)
+				f.write(' ')
+				f.write('ansible_sudo_pass=' + config_pass)
 	f.close()
         f = open('config_vars.yml', 'w')
         f.write('setup_cmd: /opt/contrail/contrail_packages/')
